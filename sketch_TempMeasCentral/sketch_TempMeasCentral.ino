@@ -10,7 +10,7 @@
 #include <Wire.h>
 #endif
 
-
+// pokus git
 #define ONE_WIRE_BUS 15
 
 
