@@ -10,7 +10,7 @@ namespace TempMeasControl
     public partial class Form1 : Form
     {
         
-        private string _portName;   
+        private string _portName = "COM5";   
         private string MeasurementName = "default";
         MessageProcessor _messageProcessor; 
 
@@ -19,7 +19,7 @@ namespace TempMeasControl
             InitializeComponent();
             _messageProcessor = new MessageProcessor( this, UpdateTemperatureData);
       
-            //   InitCom();
+              InitCom();
         }
 
       
@@ -31,6 +31,7 @@ namespace TempMeasControl
 
         private void InitCom()
         {
+
             _messageProcessor.InitCom(_portName);
         }
 
@@ -91,7 +92,7 @@ namespace TempMeasControl
 
         private void btnSensorsSettings_Click(object sender, EventArgs e)
         {
-            SetupForm setupForm = new SetupForm(_serialPort);
+            SetupForm setupForm = new SetupForm(_messageProcessor.GetPort());
 
             setupForm.ShowDialog();
         }

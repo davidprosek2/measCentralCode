@@ -33,7 +33,8 @@ namespace TempMeasControl
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            this.SelectedPort = (comboBox1.Items[comboBox1.SelectedIndex] as string) ?? "NA";   
+            this.SelectedPort = (comboBox1.Items[comboBox1.SelectedIndex] as string) ?? "NA";
+            this.Close();
         }
     }
 }
