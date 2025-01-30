@@ -5,6 +5,7 @@
 
 #include <Adafruit_ADS1X15.h>
 Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
+//funguje
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
