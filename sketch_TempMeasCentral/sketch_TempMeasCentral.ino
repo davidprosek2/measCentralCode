@@ -26,7 +26,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass the oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
-double temperatures[8];
+double temperatures[10];
 Preferences preferences;
 
 int pulsePin1 = 25;
@@ -137,7 +137,8 @@ void loop() {
 else
 {
   readTemperatures();
-  displayTemperatures(temperatures[0], temperatures[1], temperatures[2], temperatures[3], temperatures[4], temperatures[5], temperatures[6], temperatures[7]);
+    readAnalog();
+  displayTemperatures();
   sendTemperatures();
     noInterrupts();
   unsigned long period1 = pulsePeriod1;
@@ -154,7 +155,7 @@ else
     //Serial.println(str.c_str());
    processMessage(str);
   }
-readAnalog();
+
   delay(2000); // Update every 2 seconds
 }
 
@@ -165,20 +166,28 @@ void readAnalog()
   float volts0, volts1, volts2, volts3;
   adc0 = ads.readADC_SingleEnded(0);
   adc1 = ads.readADC_SingleEnded(1);
-  adc2 = ads.readADC_SingleEnded(2);
-  adc3 = ads.readADC_SingleEnded(3);
+  //adc2 = ads.readADC_SingleEnded(2);
+  //adc3 = ads.readADC_SingleEnded(3);
  
   volts0 = ads.computeVolts(adc0);
   volts1 = ads.computeVolts(adc1);
-  volts2 = ads.computeVolts(adc2);
-  volts3 = ads.computeVolts(adc3);
 
-   Serial.println("-----------------------------------------------------------");
-  Serial.print("AIN0: "); Serial.print(adc0); Serial.print("  "); Serial.print(volts0); Serial.println("V");
-  Serial.print("AIN1: "); Serial.print(adc1); Serial.print("  "); Serial.print(volts1); Serial.println("V");
-  Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
-  Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
+  temperatures[8] = voltageToTemperature(volts0);
+  temperatures[9] = voltageToTemperature(volts1);
+  //volts2 = ads.computeVolts(adc2);
+  //volts3 = ads.computeVolts(adc3);
 
+  //  Serial.println("-----------------------------------------------------------");
+  // Serial.print("AIN0: "); Serial.print(adc0); Serial.print("  "); Serial.print(volts0); Serial.println("V");
+  // Serial.print("AIN1: "); Serial.print(adc1); Serial.print("  "); Serial.print(volts1); Serial.println("V");
+  // Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
+  // Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
+
+}
+
+double voltageToTemperature(float volts)
+{
+  return 10.0 * volts;
 }
 
 
@@ -282,34 +291,50 @@ void showSetup()
 }
 
 
-void displayTemperatures(double temp1, double temp2, double temp3, double temp4,
-                         double temp5, double temp6, double temp7, double temp8) {
+void displayTemperatures() {
   u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_ncenB08_tr);
+  //u8g2.setFont(u8g2_font_ncenB08_tr);
+  u8g2.setFont(  u8g2_font_timR08_tr);
 
-  u8g2.setCursor(0, 10);
-  u8g2.print("T1: "); u8g2.print(temp1); u8g2.print(" C");
+  int fl = 10;
+  int lh = 12;
+  int y = fl;
 
-  u8g2.setCursor(64, 10);
-  u8g2.print("T5: "); u8g2.print(temp5); u8g2.print(" C");
+  u8g2.setCursor(0, y);
+  u8g2.print("T1: "); u8g2.print(temperatures[0]); u8g2.print(" C");
 
-  u8g2.setCursor(0, 26);
-  u8g2.print("T2: "); u8g2.print(temp2); u8g2.print(" C");
+  
+  u8g2.setCursor(64, y);
+  u8g2.print("T5: "); u8g2.print(temperatures[4]); u8g2.print(" C");
+  y += lh;
 
-  u8g2.setCursor(64, 26);
-  u8g2.print("T6: "); u8g2.print(temp6); u8g2.print(" C");
+  u8g2.setCursor(0, y);
+  u8g2.print("T2: "); u8g2.print(temperatures[1]); u8g2.print(" C");
 
-  u8g2.setCursor(0, 42);
-  u8g2.print("T3: "); u8g2.print(temp3); u8g2.print(" C");
+  u8g2.setCursor(64, y);
+  u8g2.print("T6: "); u8g2.print(temperatures[5]); u8g2.print(" C");
+  y += lh;
 
-  u8g2.setCursor(64, 42);
-  u8g2.print("T7: "); u8g2.print(temp7); u8g2.print(" C");
+  u8g2.setCursor(0, y);
+  u8g2.print("T3: "); u8g2.print(temperatures[2]); u8g2.print(" C");
 
-  u8g2.setCursor(0, 58);
-  u8g2.print("T4: "); u8g2.print(temp4); u8g2.print(" C");
+  u8g2.setCursor(64, y);
+  u8g2.print("T9: "); u8g2.print(temperatures[8]); u8g2.print(" C");
+  y += lh;
 
-  u8g2.setCursor(64, 58);
-  u8g2.print("T8: "); u8g2.print(temp8); u8g2.print(" C");
+  u8g2.setCursor(0, y);
+  u8g2.print("T4: "); u8g2.print(temperatures[3]); u8g2.print(" C");
+
+  u8g2.setCursor(64, y);
+  u8g2.print("TA: "); u8g2.print(temperatures[9]); u8g2.print(" C");
+
+  y += lh;
+
+  u8g2.setCursor(0, y);
+  u8g2.print("Vt: "); u8g2.print(550); u8g2.print(" l/h");
+
+  u8g2.setCursor(64, y);
+  u8g2.print("P: "); u8g2.print(1000); u8g2.print(" W");
 
   u8g2.sendBuffer();
 }
