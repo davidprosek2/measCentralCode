@@ -266,9 +266,11 @@ void sendTemperatures() {
   for (int i = 1; i < 8; i++) {
     temperatureString += ";" + String(temperatures[i]);
   }
+  temperatureString += ";" + String(lastPulseTime1);
+  temperatureString += ";" + String(lastPulseTime2);
   Serial.println(temperatureString);
 }
-
+//551189319;0
 
 void showSetup()
 {
