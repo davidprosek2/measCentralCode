@@ -29,10 +29,12 @@ namespace TempMeasControl
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.SelectedPort = string.Empty;
+            this.DialogResult = DialogResult.Cancel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.OK;
             this.SelectedPort = (comboBox1.Items[comboBox1.SelectedIndex] as string) ?? "NA";
             this.Close();
         }

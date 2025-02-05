@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Resources\thermometers2.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\thermometers2.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="9.0.0" />

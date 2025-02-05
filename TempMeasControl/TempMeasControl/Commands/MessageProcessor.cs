@@ -46,7 +46,15 @@ namespace TempMeasControl.Commands
             if (!_serialPort.IsOpen)
             {
                 _serialPort.PortName = portName; // Replace with your COM port
-                _serialPort.Open();
+                try
+                {
+                    _serialPort.Open();
+                }
+                catch (Exception ex) 
+                {
+                    MessageBox.Show($"Port {portName} not found","ERROR",MessageBoxButtons.OK, MessageBoxIcon.Error);   
+                }
+                
             }
         }
 
@@ -79,6 +87,8 @@ namespace TempMeasControl.Commands
             }
 
         }
+
+        public SerialPort GetPort() { return _serialPort; } 
 
 
         public void Ping()

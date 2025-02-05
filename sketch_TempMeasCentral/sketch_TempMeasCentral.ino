@@ -4,7 +4,7 @@
 #include <Preferences.h>
 
 #include <Adafruit_ADS1X15.h>
-Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
+Adafruit_ADS1115 ads; /* Use this for the 16-bit version */
 //funguje
 
 #ifdef U8X8_HAVE_HW_SPI
@@ -26,7 +26,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass the oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
-double temperatures[10];
+double temperatures[12];
 Preferences preferences;
 
 int pulsePin1 = 25;
@@ -66,7 +66,7 @@ DeviceAddress sensor8 = { 0x28, 0xFF, 0x6B, 0x1A, 0x10, 0x00, 0x00, 0x40 };
 
 
 
-U8G2_ST7920_128X64_F_SW_SPI u8g2(U8G2_R0, /* clock=*/ 18, /* data=*/ 23, /* CS=*/ 5, /* reset=*/ 0); // ESP32
+U8G2_ST7920_128X64_F_SW_SPI u8g2(U8G2_R0, /* clock=*/18, /* data=*/23, /* CS=*/5, /* reset=*/0);  // ESP32
 
 //adc bude 21 a 22
 // display reset bude 0 misto 22
@@ -80,33 +80,28 @@ void u8g2_prepare(void) {
 }
 
 
-void processMessage(String str)
-{
+void processMessage(String str) {
   setupMode = false;
   str.trim();
-  if(str == "PA")
-  {
-      printAllSensorsAddresses();
-  }
-  else if(str == "SETUP")
-  {
-      setupMode = true;
+  if (str == "PA") {
+    printAllSensorsAddresses();
+  } else if (str == "SETUP") {
+    setupMode = true;
   }
   //else if(str.)
 }
 
-void setup() 
-{
+void setup() {
   u8g2.begin();
   Serial.begin(115200);
   sensors.begin();
-   
+
 
   InitSensorAddresses();
 
   //podsvícení
-  pinMode(backligtPin,OUTPUT);
-  analogWrite(backligtPin,20);
+  pinMode(backligtPin, OUTPUT);
+  analogWrite(backligtPin, 20);
 
   //inicializace čítače
   pinMode(pulsePin1, INPUT_PULLUP);
@@ -116,59 +111,90 @@ void setup()
 
   ads.setGain(GAIN_ONE);
 
-  if (!ads.begin())
-  {
+  if (!ads.begin()) {
     Serial.println("Failed to initialize ADS.");
-    while (1);
+    while (1)
+      ;
   }
 
   // Check each sensor and print the address
- 
-
 }
 
 void loop() {
   // Example temperatures
 
-  if(setupMode)
-  {
-      showSetup();
-  }
-else
-{
-  readTemperatures();
-    readAnalog();
-  displayTemperatures();
-  sendTemperatures();
+  if (setupMode) {
+    showSetup();
+  } else {
     noInterrupts();
-  unsigned long period1 = pulsePeriod1;
-  unsigned long count1 = pulseCount1;
-  unsigned long period2 = pulsePeriod2;
-  unsigned long count2 = pulseCount2;
-  interrupts();
-}
+    unsigned long period1 = pulsePeriod1;
+    unsigned long count1 = pulseCount1;
+    unsigned long period2 = pulsePeriod2;
+    unsigned long count2 = pulseCount2;
+    interrupts();
+    readTemperatures();
+    readAnalog();
+    float flow = PeriodToFlow(period1);
+    float power = PeriodToPower(period2);
+    temperatures[10] = flow;
+    temperatures[11] = power;
+    displayTemperatures();
+    sendTemperatures();
+  }
 
-  while (Serial.available()) 
-  {
+  while (Serial.available()) {
     //char c = Serial.read();
     String str = Serial.readString();
     //Serial.println(str.c_str());
-   processMessage(str);
+    processMessage(str);
   }
 
-  delay(2000); // Update every 2 seconds
+  delay(2000);  // Update every 2 seconds
+  unsigned long currentTime = micros();
+  if(currentTime - lastPulseTime1 > 12000000)
+    pulsePeriod1 = (currentTime - lastPulseTime1)*4;
+  if(currentTime - lastPulseTime2 > 12000000)
+    pulsePeriod2 = (currentTime - lastPulseTime2)*4;
+
+}
+
+///
+/// frokvence pulsu je 1puls na litr
+///
+float PeriodToFlow(unsigned long period)
+{
+  if(period == 0)
+    return 0.0f;
+  float freq = 1000000.0 / period;
+  float flow = freq * 3600.0;
+  if(flow < 50.0)
+    flow = 0.0;
+  return flow;
+}
+
+/// frekvence je puls na 50kJ 
+float PeriodToPower(unsigned long period)
+{
+  if(period == 0)
+    return 0.0;
+  float freq = 1000000.0 / period;
+  float PkW = 50 * freq;
+  if(PkW < 0.5)
+    PkW = 0;
+  return PkW;
 }
 
 
-void readAnalog()
-{
+
+
+void readAnalog() {
   int16_t adc0, adc1, adc2, adc3;
   float volts0, volts1, volts2, volts3;
   adc0 = ads.readADC_SingleEnded(0);
   adc1 = ads.readADC_SingleEnded(1);
   //adc2 = ads.readADC_SingleEnded(2);
   //adc3 = ads.readADC_SingleEnded(3);
- 
+
   volts0 = ads.computeVolts(adc0);
   volts1 = ads.computeVolts(adc1);
 
@@ -182,32 +208,28 @@ void readAnalog()
   // Serial.print("AIN1: "); Serial.print(adc1); Serial.print("  "); Serial.print(volts1); Serial.println("V");
   // Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
   // Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
-
 }
 
-double voltageToTemperature(float volts)
-{
-  return 10.0 * volts;
+double voltageToTemperature(float volts) {
+  return 31.25 * volts;
 }
 
 
 
-void printAllSensorsAddresses()
-{
-   printAddress(sensor1);
+void printAllSensorsAddresses() {
+  printAddress(sensor1);
   printAddress(sensor2);
   printAddress(sensor3);
   printAddress(sensor4);
   printAddress(sensor5);
   printAddress(sensor6);
   printAddress(sensor7);
-  printAddress(sensor8);  
+  printAddress(sensor8);
 }
 
-void InitSensorAddresses()
-{
+void InitSensorAddresses() {
   preferences.begin("my_variables", false);
-    if (!preferences.getBool("initialized", false)) {
+  if (!preferences.getBool("initialized", false)) {
     // Initializing the sensor addresses if not already done
     preferences.putBytes("sensor1", sensor1, sizeof(DeviceAddress));
     preferences.putBytes("sensor2", sensor2, sizeof(DeviceAddress));
@@ -229,23 +251,38 @@ void InitSensorAddresses()
     preferences.getBytes("sensor7", sensor7, sizeof(DeviceAddress));
     preferences.getBytes("sensor8", sensor8, sizeof(DeviceAddress));
   }
-  
+
   preferences.end();
 }
 
 
 
 void readTemperatures() {
-  sensors.requestTemperatures(); // Send the command to get temperatures
+  sensors.requestTemperatures();  // Send the command to get temperatures
 
-  temperatures[0] = sensors.getTempC(sensor1);
-  temperatures[1] = sensors.getTempC(sensor2);
-  temperatures[2] = sensors.getTempC(sensor3);
-  temperatures[3] = sensors.getTempC(sensor4);
-  temperatures[4] = sensors.getTempC(sensor5);
-  temperatures[5] = sensors.getTempC(sensor6);
-  temperatures[6] = sensors.getTempC(sensor7);
-  temperatures[7] = sensors.getTempC(sensor8);
+  temperatures[0] = sensors.getTempC(sensor1,2);
+  temperatures[1] = sensors.getTempC(sensor2,2);
+  temperatures[2] = sensors.getTempC(sensor3,2);
+  temperatures[3] = sensors.getTempC(sensor4,2);
+  temperatures[4] = sensors.getTempC(sensor5,2);
+  temperatures[5] = sensors.getTempC(sensor6,2);
+  temperatures[6] = sensors.getTempC(sensor7,2);
+  temperatures[7] = sensors.getTempC(sensor8,2);
+
+  for(int i = 0;i<8;i++)
+  {
+    if(temperatures[i] < -100.0)
+      temperatures[i] = 0.0;
+  }
+
+  //  temperatures[0] = 20.0;
+  // temperatures[1] = 20.1;
+  // temperatures[2] = 20.2;
+  // temperatures[3] = 20.3;
+  // temperatures[4] = 20.4;
+  // temperatures[5] = 20.5;
+  // temperatures[6] = 20.6;
+  // temperatures[7] = 20.7;
 
   // Print temperatures to Serial Monitor
   // for (int i = 0; i < 8; i++) {
@@ -263,26 +300,25 @@ void printAddress(DeviceAddress deviceAddress) {
     Serial.print(deviceAddress[i], HEX);
   }
   Serial.print(":");
-  if(sensors.isConnected(deviceAddress))
+  if (sensors.isConnected(deviceAddress))
     Serial.print("Connected");
   else
-   Serial.print("FAILED");
+    Serial.print("FAILED");
   Serial.println();
 }
 
 void sendTemperatures() {
   String temperatureString = String(temperatures[0]);
-  for (int i = 1; i < 8; i++) {
+  for (int i = 1; i < 12; i++) {
     temperatureString += ";" + String(temperatures[i]);
   }
-  temperatureString += ";" + String(lastPulseTime1);
-  temperatureString += ";" + String(lastPulseTime2);
+  // temperatureString += ";" + String();
+  // temperatureString += ";" + String(lastPulseTime2);
   Serial.println(temperatureString);
 }
 //551189319;0
 
-void showSetup()
-{
+void showSetup() {
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_ncenB14_te);
   u8g2.setCursor(0, 30);
@@ -294,48 +330,67 @@ void showSetup()
 void displayTemperatures() {
   u8g2.clearBuffer();
   //u8g2.setFont(u8g2_font_ncenB08_tr);
-  u8g2.setFont(  u8g2_font_timR08_tr);
+  u8g2.setFont(u8g2_font_timR08_tr);
 
   int fl = 10;
   int lh = 12;
   int y = fl;
 
   u8g2.setCursor(0, y);
-  u8g2.print("T1: "); u8g2.print(temperatures[0]); u8g2.print(" C");
+  u8g2.print("T1: ");
+  u8g2.print(temperatures[0]);
+  u8g2.print(" C");
 
-  
+
   u8g2.setCursor(64, y);
-  u8g2.print("T5: "); u8g2.print(temperatures[4]); u8g2.print(" C");
+  u8g2.print("T5: ");
+  u8g2.print(temperatures[4]);
+  u8g2.print(" C");
   y += lh;
 
   u8g2.setCursor(0, y);
-  u8g2.print("T2: "); u8g2.print(temperatures[1]); u8g2.print(" C");
+  u8g2.print("T2: ");
+  u8g2.print(temperatures[1]);
+  u8g2.print(" C");
 
   u8g2.setCursor(64, y);
-  u8g2.print("T6: "); u8g2.print(temperatures[5]); u8g2.print(" C");
+  u8g2.print("T6: ");
+  u8g2.print(temperatures[5]);
+  u8g2.print(" C");
   y += lh;
 
   u8g2.setCursor(0, y);
-  u8g2.print("T3: "); u8g2.print(temperatures[2]); u8g2.print(" C");
+  u8g2.print("T3: ");
+  u8g2.print(temperatures[2]);
+  u8g2.print(" C");
 
   u8g2.setCursor(64, y);
-  u8g2.print("T9: "); u8g2.print(temperatures[8]); u8g2.print(" C");
+  u8g2.print("T9: ");
+  u8g2.print(temperatures[8]);
+  u8g2.print(" C");
   y += lh;
 
   u8g2.setCursor(0, y);
-  u8g2.print("T4: "); u8g2.print(temperatures[3]); u8g2.print(" C");
+  u8g2.print("T4: ");
+  u8g2.print(temperatures[3]);
+  u8g2.print(" C");
 
   u8g2.setCursor(64, y);
-  u8g2.print("TA: "); u8g2.print(temperatures[9]); u8g2.print(" C");
+  u8g2.print("TA: ");
+  u8g2.print(temperatures[9]);
+  u8g2.print(" C");
 
   y += lh;
 
   u8g2.setCursor(0, y);
-  u8g2.print("Vt: "); u8g2.print(550); u8g2.print(" l/h");
+  u8g2.print("Vt: ");
+  u8g2.print(temperatures[10]);
+  u8g2.print(" l/h");
 
   u8g2.setCursor(64, y);
-  u8g2.print("P: "); u8g2.print(1000); u8g2.print(" W");
+  u8g2.print("P: ");
+  u8g2.print(temperatures[11]);
+  u8g2.print(" kW");
 
   u8g2.sendBuffer();
 }
-

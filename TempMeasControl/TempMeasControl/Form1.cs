@@ -9,20 +9,20 @@ namespace TempMeasControl
 {
     public partial class Form1 : Form
     {
-        
-        private string _portName = "COM5";   
+
+        private string _portName = "COM4";
         private string MeasurementName = "default";
-        MessageProcessor _messageProcessor; 
+        MessageProcessor _messageProcessor;
 
         public Form1()
         {
             InitializeComponent();
-            _messageProcessor = new MessageProcessor( this, UpdateTemperatureData);
-      
-              InitCom();
+            _messageProcessor = new MessageProcessor(this, UpdateTemperatureData);
+
+            InitCom();
         }
 
-      
+
 
         private void StartButton_Click(object sender, EventArgs e)
         {
@@ -40,14 +40,14 @@ namespace TempMeasControl
             _messageProcessor.CloseCom();
         }
 
-        
+
 
         private void UpdateTemperatureData(string data)
         {
             Debug.WriteLine(data);
             // Assume the data is in the format "temp1;temp2;temp3;...;temp8"
             string[] temperatures = data.Split(';');
-            if (temperatures.Length == 8)
+            if (temperatures.Length > 8)
             {
                 textBox1.Text = temperatures[0];
                 textBox2.Text = temperatures[1];
@@ -57,11 +57,15 @@ namespace TempMeasControl
                 textBox6.Text = temperatures[5];
                 textBox7.Text = temperatures[6];
                 textBox8.Text = temperatures[7];
+                textBox9.Text = temperatures[8];
+                textBox10.Text = temperatures[9];
+                textBoxVt.Text = temperatures[10];
+                textBoxP.Text = temperatures[11];
             }
             WriteTemperatures(data);
         }
 
-        
+
 
         private void WriteTemperatures(string data)
         {
@@ -101,10 +105,12 @@ namespace TempMeasControl
         {
             COMPortSelect cOMPortSelect = new COMPortSelect();
             if (cOMPortSelect.ShowDialog() == DialogResult.OK)
-            { 
+            {
                 _portName = cOMPortSelect.SelectedPort;
-                InitCom() ; 
+                InitCom();
             }
         }
+
+      
     }
 }

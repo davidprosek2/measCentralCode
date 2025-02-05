@@ -47,6 +47,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -74,141 +75,165 @@
             nastaveníČidelToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             statusStripPort = new ToolStripStatusLabel();
+            label9 = new Label();
+            label10 = new Label();
+            label11 = new Label();
+            label12 = new Label();
+            textBox9 = new TextBox();
+            textBoxVt = new TextBox();
+            textBox10 = new TextBox();
+            textBoxP = new TextBox();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
-            label1.Location = new Point(11, 51);
+            label1.Font = new Font("Segoe UI", 15.75F);
+            label1.Location = new Point(25, 51);
             label1.Name = "label1";
-            label1.Size = new Size(50, 20);
+            label1.Size = new Size(95, 35);
             label1.TabIndex = 0;
             label1.Text = "Temp 1:";
             // 
             // label2
             // 
-            label2.Location = new Point(11, 81);
+            label2.Font = new Font("Segoe UI", 15.75F);
+            label2.Location = new Point(25, 92);
             label2.Name = "label2";
-            label2.Size = new Size(50, 20);
+            label2.Size = new Size(95, 35);
             label2.TabIndex = 1;
             label2.Text = "Temp 2:";
             // 
             // label3
             // 
-            label3.Location = new Point(11, 111);
+            label3.Font = new Font("Segoe UI", 15.75F);
+            label3.Location = new Point(25, 133);
             label3.Name = "label3";
-            label3.Size = new Size(50, 20);
+            label3.Size = new Size(95, 35);
             label3.TabIndex = 2;
             label3.Text = "Temp 3:";
             // 
             // label4
             // 
-            label4.Location = new Point(11, 141);
+            label4.Font = new Font("Segoe UI", 15.75F);
+            label4.Location = new Point(25, 174);
             label4.Name = "label4";
-            label4.Size = new Size(50, 20);
+            label4.Size = new Size(95, 35);
             label4.TabIndex = 3;
             label4.Text = "Temp 4:";
             // 
             // label5
             // 
-            label5.Location = new Point(201, 51);
+            label5.Font = new Font("Segoe UI", 15.75F);
+            label5.Location = new Point(275, 51);
             label5.Name = "label5";
-            label5.Size = new Size(50, 20);
+            label5.Size = new Size(95, 35);
             label5.TabIndex = 4;
             label5.Text = "Temp 5:";
             // 
             // label6
             // 
-            label6.Location = new Point(201, 81);
+            label6.Font = new Font("Segoe UI", 15.75F);
+            label6.Location = new Point(275, 95);
             label6.Name = "label6";
-            label6.Size = new Size(50, 20);
+            label6.Size = new Size(95, 35);
             label6.TabIndex = 5;
             label6.Text = "Temp 6:";
             // 
             // label7
             // 
-            label7.Location = new Point(201, 111);
+            label7.Font = new Font("Segoe UI", 15.75F);
+            label7.Location = new Point(275, 133);
             label7.Name = "label7";
-            label7.Size = new Size(50, 20);
+            label7.Size = new Size(95, 35);
             label7.TabIndex = 6;
             label7.Text = "Temp 7:";
             // 
             // label8
             // 
-            label8.Location = new Point(201, 141);
+            label8.Font = new Font("Segoe UI", 15.75F);
+            label8.Location = new Point(275, 174);
             label8.Name = "label8";
-            label8.Size = new Size(50, 20);
+            label8.Size = new Size(95, 35);
             label8.TabIndex = 7;
             label8.Text = "Temp 8:";
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(71, 51);
+            textBox1.Font = new Font("Segoe UI", 15.75F);
+            textBox1.Location = new Point(126, 51);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
-            textBox1.Size = new Size(100, 23);
+            textBox1.Size = new Size(100, 35);
             textBox1.TabIndex = 8;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(71, 81);
+            textBox2.Font = new Font("Segoe UI", 15.75F);
+            textBox2.Location = new Point(126, 92);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(100, 23);
+            textBox2.Size = new Size(100, 35);
             textBox2.TabIndex = 9;
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(71, 111);
+            textBox3.Font = new Font("Segoe UI", 15.75F);
+            textBox3.Location = new Point(126, 133);
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
-            textBox3.Size = new Size(100, 23);
+            textBox3.Size = new Size(100, 35);
             textBox3.TabIndex = 10;
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(71, 141);
+            textBox4.Font = new Font("Segoe UI", 15.75F);
+            textBox4.Location = new Point(126, 174);
             textBox4.Name = "textBox4";
             textBox4.ReadOnly = true;
-            textBox4.Size = new Size(100, 23);
+            textBox4.Size = new Size(100, 35);
             textBox4.TabIndex = 11;
             // 
             // textBox5
             // 
-            textBox5.Location = new Point(261, 51);
+            textBox5.Font = new Font("Segoe UI", 15.75F);
+            textBox5.Location = new Point(401, 48);
             textBox5.Name = "textBox5";
             textBox5.ReadOnly = true;
-            textBox5.Size = new Size(100, 23);
+            textBox5.Size = new Size(100, 35);
             textBox5.TabIndex = 12;
             // 
             // textBox6
             // 
-            textBox6.Location = new Point(261, 81);
+            textBox6.Font = new Font("Segoe UI", 15.75F);
+            textBox6.Location = new Point(401, 89);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
-            textBox6.Size = new Size(100, 23);
+            textBox6.Size = new Size(100, 35);
             textBox6.TabIndex = 13;
             // 
             // textBox7
             // 
-            textBox7.Location = new Point(261, 111);
+            textBox7.Font = new Font("Segoe UI", 15.75F);
+            textBox7.Location = new Point(401, 130);
             textBox7.Name = "textBox7";
             textBox7.ReadOnly = true;
-            textBox7.Size = new Size(100, 23);
+            textBox7.Size = new Size(100, 35);
             textBox7.TabIndex = 14;
             // 
             // textBox8
             // 
-            textBox8.Location = new Point(261, 141);
+            textBox8.Font = new Font("Segoe UI", 15.75F);
+            textBox8.Location = new Point(401, 171);
             textBox8.Name = "textBox8";
             textBox8.ReadOnly = true;
-            textBox8.Size = new Size(100, 23);
+            textBox8.Size = new Size(100, 35);
             textBox8.TabIndex = 15;
             // 
             // startButton
             // 
-            startButton.Location = new Point(13, 191);
+            startButton.Location = new Point(604, 63);
             startButton.Name = "startButton";
             startButton.Size = new Size(75, 23);
             startButton.TabIndex = 16;
@@ -217,7 +242,7 @@
             // 
             // stopButton
             // 
-            stopButton.Location = new Point(96, 191);
+            stopButton.Location = new Point(604, 107);
             stopButton.Name = "stopButton";
             stopButton.Size = new Size(75, 23);
             stopButton.TabIndex = 17;
@@ -226,7 +251,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(439, 53);
+            button1.Location = new Point(364, 331);
             button1.Name = "button1";
             button1.Size = new Size(122, 23);
             button1.TabIndex = 18;
@@ -236,7 +261,7 @@
             // 
             // btnStopMeasurement
             // 
-            btnStopMeasurement.Location = new Point(587, 53);
+            btnStopMeasurement.Location = new Point(559, 331);
             btnStopMeasurement.Name = "btnStopMeasurement";
             btnStopMeasurement.Size = new Size(140, 23);
             btnStopMeasurement.TabIndex = 19;
@@ -246,7 +271,7 @@
             // 
             // btnSensorsSettings
             // 
-            btnSensorsSettings.Location = new Point(13, 236);
+            btnSensorsSettings.Location = new Point(12, 331);
             btnSensorsSettings.Name = "btnSensorsSettings";
             btnSensorsSettings.Size = new Size(171, 23);
             btnSensorsSettings.TabIndex = 20;
@@ -273,20 +298,20 @@
             // portToolStripMenuItem
             // 
             portToolStripMenuItem.Name = "portToolStripMenuItem";
-            portToolStripMenuItem.Size = new Size(180, 22);
+            portToolStripMenuItem.Size = new Size(154, 22);
             portToolStripMenuItem.Text = "Port";
             portToolStripMenuItem.Click += portToolStripMenuItem_Click;
             // 
             // nastaveníČidelToolStripMenuItem
             // 
             nastaveníČidelToolStripMenuItem.Name = "nastaveníČidelToolStripMenuItem";
-            nastaveníČidelToolStripMenuItem.Size = new Size(180, 22);
+            nastaveníČidelToolStripMenuItem.Size = new Size(154, 22);
             nastaveníČidelToolStripMenuItem.Text = "Nastavení čidel";
             // 
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { statusStripPort });
-            statusStrip1.Location = new Point(0, 280);
+            statusStrip1.Location = new Point(0, 388);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(755, 22);
             statusStrip1.TabIndex = 22;
@@ -298,9 +323,89 @@
             statusStripPort.Size = new Size(84, 17);
             statusStripPort.Text = "statusStripPort";
             // 
+            // label9
+            // 
+            label9.Font = new Font("Segoe UI", 15.75F);
+            label9.Location = new Point(25, 221);
+            label9.Name = "label9";
+            label9.Size = new Size(95, 35);
+            label9.TabIndex = 23;
+            label9.Text = "Temp 9:";
+            // 
+            // label10
+            // 
+            label10.Font = new Font("Segoe UI", 15.75F);
+            label10.Location = new Point(25, 262);
+            label10.Name = "label10";
+            label10.Size = new Size(95, 35);
+            label10.TabIndex = 24;
+            label10.Text = "Průtok:";
+            // 
+            // label11
+            // 
+            label11.Font = new Font("Segoe UI", 15.75F);
+            label11.Location = new Point(275, 221);
+            label11.Name = "label11";
+            label11.Size = new Size(104, 35);
+            label11.TabIndex = 25;
+            label11.Text = "Temp 10:";
+            // 
+            // label12
+            // 
+            label12.Font = new Font("Segoe UI", 15.75F);
+            label12.Location = new Point(275, 262);
+            label12.Name = "label12";
+            label12.Size = new Size(95, 35);
+            label12.TabIndex = 26;
+            label12.Text = "Výkon:";
+            // 
+            // textBox9
+            // 
+            textBox9.Font = new Font("Segoe UI", 15.75F);
+            textBox9.Location = new Point(126, 221);
+            textBox9.Name = "textBox9";
+            textBox9.ReadOnly = true;
+            textBox9.Size = new Size(100, 35);
+            textBox9.TabIndex = 27;
+            // 
+            // textBoxVt
+            // 
+            textBoxVt.Font = new Font("Segoe UI", 15.75F);
+            textBoxVt.Location = new Point(126, 262);
+            textBoxVt.Name = "textBoxVt";
+            textBoxVt.ReadOnly = true;
+            textBoxVt.Size = new Size(100, 35);
+            textBoxVt.TabIndex = 28;
+            // 
+            // textBox10
+            // 
+            textBox10.Font = new Font("Segoe UI", 15.75F);
+            textBox10.Location = new Point(401, 218);
+            textBox10.Name = "textBox10";
+            textBox10.ReadOnly = true;
+            textBox10.Size = new Size(100, 35);
+            textBox10.TabIndex = 29;
+            // 
+            // textBoxP
+            // 
+            textBoxP.Font = new Font("Segoe UI", 15.75F);
+            textBoxP.Location = new Point(401, 259);
+            textBoxP.Name = "textBoxP";
+            textBoxP.ReadOnly = true;
+            textBoxP.Size = new Size(100, 35);
+            textBoxP.TabIndex = 30;
+            // 
             // Form1
             // 
-            ClientSize = new Size(755, 302);
+            ClientSize = new Size(755, 410);
+            Controls.Add(label9);
+            Controls.Add(label10);
+            Controls.Add(label11);
+            Controls.Add(label12);
+            Controls.Add(textBox9);
+            Controls.Add(textBoxVt);
+            Controls.Add(textBox10);
+            Controls.Add(textBoxP);
             Controls.Add(statusStrip1);
             Controls.Add(btnSensorsSettings);
             Controls.Add(btnStopMeasurement);
@@ -324,6 +429,7 @@
             Controls.Add(startButton);
             Controls.Add(stopButton);
             Controls.Add(menuStrip1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
             Name = "Form1";
             menuStrip1.ResumeLayout(false);
@@ -346,5 +452,13 @@
         private ToolStripMenuItem nastaveníČidelToolStripMenuItem;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel statusStripPort;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private Label label12;
+        private TextBox textBox9;
+        private TextBox textBoxVt;
+        private TextBox textBox10;
+        private TextBox textBoxP;
     }
 }
