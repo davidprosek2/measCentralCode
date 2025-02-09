@@ -83,6 +83,8 @@
             textBoxVt = new TextBox();
             textBox10 = new TextBox();
             textBoxP = new TextBox();
+            btnNote = new Button();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             SuspendLayout();
@@ -310,7 +312,7 @@
             // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { statusStripPort });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { statusStripPort, toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 388);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(755, 22);
@@ -395,9 +397,26 @@
             textBoxP.Size = new Size(100, 35);
             textBoxP.TabIndex = 30;
             // 
+            // btnNote
+            // 
+            btnNote.Location = new Point(615, 190);
+            btnNote.Name = "btnNote";
+            btnNote.Size = new Size(75, 23);
+            btnNote.TabIndex = 31;
+            btnNote.Text = "Poznamka";
+            btnNote.UseVisualStyleBackColor = true;
+            btnNote.Click += btnNote_Click;
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(138, 17);
+            toolStripStatusLabel1.Text = "toolStripStatusLabelTime";
+            // 
             // Form1
             // 
             ClientSize = new Size(755, 410);
+            Controls.Add(btnNote);
             Controls.Add(label9);
             Controls.Add(label10);
             Controls.Add(label11);
@@ -460,5 +479,7 @@
         private TextBox textBoxVt;
         private TextBox textBox10;
         private TextBox textBoxP;
+        private Button btnNote;
+        private ToolStripStatusLabel toolStripStatusLabel1;
     }
 }

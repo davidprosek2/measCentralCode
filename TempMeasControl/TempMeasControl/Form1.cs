@@ -10,7 +10,7 @@ namespace TempMeasControl
     public partial class Form1 : Form
     {
 
-        private string _portName = "COM4";
+        private string _portName = "COM5";
         private string MeasurementName = "default";
         MessageProcessor _messageProcessor;
 
@@ -49,18 +49,22 @@ namespace TempMeasControl
             string[] temperatures = data.Split(';');
             if (temperatures.Length > 8)
             {
-                textBox1.Text = temperatures[0];
-                textBox2.Text = temperatures[1];
-                textBox3.Text = temperatures[2];
-                textBox4.Text = temperatures[3];
-                textBox5.Text = temperatures[4];
-                textBox6.Text = temperatures[5];
-                textBox7.Text = temperatures[6];
-                textBox8.Text = temperatures[7];
-                textBox9.Text = temperatures[8];
-                textBox10.Text = temperatures[9];
-                textBoxVt.Text = temperatures[10];
-                textBoxP.Text = temperatures[11];
+                int.TryParse(temperatures[0], out int time);
+                time = time / 1000;
+
+                toolStripStatusLabel1.Text =  time.ToString();
+                textBox1.Text = temperatures[1];
+                textBox2.Text = temperatures[2];
+                textBox3.Text = temperatures[3];
+                textBox4.Text = temperatures[4];
+                textBox5.Text = temperatures[5];
+                textBox6.Text = temperatures[6];
+                textBox7.Text = temperatures[7];
+                textBox8.Text = temperatures[8];
+                textBox9.Text = temperatures[9];
+                textBox10.Text = temperatures[10];
+                textBoxVt.Text = temperatures[11];
+                textBoxP.Text = temperatures[12];
             }
             WriteTemperatures(data);
         }
@@ -70,9 +74,24 @@ namespace TempMeasControl
         private void WriteTemperatures(string data)
         {
 
-            string datats = $"{DateTime.Now.ToString()};{data.Replace(".", ",")}";
+            string datats = $"{DateTime.Now.ToString()};{data.Replace(".", ",").Replace(Environment.NewLine,"")}";
+            if (this._notesForm != null && !_notesForm.IsDisposed)
+            {
+                lock (_notesForm.lck)
+                {
+                    datats += ";" +(this._notesForm.Volume.HasValue ? this._notesForm.Volume.Value.ToString("0000") : "") + ";";
+                    datats += (this._notesForm.Energy.HasValue ? this._notesForm.Energy.Value.ToString("00.00") : "") + ";";
+                    datats += (this._notesForm.Note ?? "").Replace(Environment.NewLine," ") + ";";
+                }
+                _notesForm.Clear();
+            }
+            else
+            {
+                datats += ";;;";
+            }
             Debug.WriteLine(datats);
-            File.AppendAllText($"{MeasurementName}.csv", datats);
+            datats =  datats.Replace(Environment.NewLine, "").Replace("\r","").Replace("\n","");
+            File.AppendAllText($"{MeasurementName}.csv", datats + Environment.NewLine);
 
         }
 
@@ -111,6 +130,15 @@ namespace TempMeasControl
             }
         }
 
-      
+        private NotesForm _notesForm;
+
+        private void btnNote_Click(object sender, EventArgs e)
+        {
+            if(_notesForm == null)  
+                _notesForm = new NotesForm();
+            if(_notesForm.IsDisposed)
+                _notesForm = new NotesForm();
+            _notesForm.Show();
+        }
     }
 }

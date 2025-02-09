@@ -26,7 +26,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass the oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
-double temperatures[12];
+double temperatures[16];
 Preferences preferences;
 
 int pulsePin1 = 25;
@@ -41,20 +41,20 @@ volatile unsigned long pulsePeriod2 = 0;
 volatile unsigned long pulseCount2 = 0;
 
 void IRAM_ATTR handlePulse1() {
-  unsigned long currentTime = micros();
+  unsigned long currentTime = millis();
   pulsePeriod1 = currentTime - lastPulseTime1;
   lastPulseTime1 = currentTime;
   pulseCount1++;
 }
 
 void IRAM_ATTR handlePulse2() {
-  unsigned long currentTime = micros();
+  unsigned long currentTime = millis();
   pulsePeriod2 = currentTime - lastPulseTime2;
   lastPulseTime2 = currentTime;
   pulseCount2++;
 }
 
-// Device addresses
+// Device addresses  
 DeviceAddress sensor1 = { 0x28, 0x1C, 0x7C, 0x1B, 0x10, 0x00, 0x00, 0x92 };
 DeviceAddress sensor2 = { 0x28, 0x7C, 0x59, 0x1C, 0x10, 0x00, 0x00, 0xFD };
 DeviceAddress sensor3 = { 0x28, 0xA1, 0xF2, 0x1A, 0x10, 0x00, 0x00, 0x39 };
@@ -134,10 +134,14 @@ void loop() {
     interrupts();
     readTemperatures();
     readAnalog();
-    float flow = PeriodToFlow(period1);
-    float power = PeriodToPower(period2);
+    float flow = PeriodToFlow(period2);
+    float power = PeriodToPower(period1);
     temperatures[10] = flow;
     temperatures[11] = power;
+    temperatures[12] = period2;
+    temperatures[13] = period1;
+    temperatures[14] = count2;
+    temperatures[15] = count1;
     displayTemperatures();
     sendTemperatures();
   }
@@ -149,12 +153,12 @@ void loop() {
     processMessage(str);
   }
 
-  delay(2000);  // Update every 2 seconds
-  unsigned long currentTime = micros();
-  if(currentTime - lastPulseTime1 > 12000000)
-    pulsePeriod1 = (currentTime - lastPulseTime1)*4;
-  if(currentTime - lastPulseTime2 > 12000000)
-    pulsePeriod2 = (currentTime - lastPulseTime2)*4;
+  delay(10000);  // Update every 2 seconds
+  unsigned long currentTime = millis();
+  if(currentTime - lastPulseTime1 > 60000 * 15)
+    pulsePeriod1 = (currentTime - lastPulseTime1)*32;
+  if(currentTime - lastPulseTime2 > 60000 * 15)
+    pulsePeriod2 = (currentTime - lastPulseTime2)*32;
 
 }
 
@@ -165,9 +169,9 @@ float PeriodToFlow(unsigned long period)
 {
   if(period == 0)
     return 0.0f;
-  float freq = 1000000.0 / period;
-  float flow = freq * 3600.0;
-  if(flow < 50.0)
+  float freq = 1000.0 / period;
+  float flow = freq * 100.0 * 3600.0 ;
+  if(flow < 5.0)
     flow = 0.0;
   return flow;
 }
@@ -177,10 +181,10 @@ float PeriodToPower(unsigned long period)
 {
   if(period == 0)
     return 0.0;
-  float freq = 1000000.0 / period;
+  float freq = 1000.0 / period;
   float PkW = 50 * freq;
-  if(PkW < 0.5)
-    PkW = 0;
+ // if(PkW < 0.5)
+   // PkW = 0;
   return PkW;
 }
 
@@ -308,12 +312,17 @@ void printAddress(DeviceAddress deviceAddress) {
 }
 
 void sendTemperatures() {
-  String temperatureString = String(temperatures[0]);
-  for (int i = 1; i < 12; i++) {
+  String temperatureString = String(millis()) ;
+  for (int i = 0; i < 16; i++) {
     temperatureString += ";" + String(temperatures[i]);
   }
-  // temperatureString += ";" + String();
-  // temperatureString += ";" + String(lastPulseTime2);
+ 
+   temperatureString += ";" + String(lastPulseTime1);
+
+  
+   temperatureString += ";" + String(lastPulseTime2);
+
+
   Serial.println(temperatureString);
 }
 //551189319;0
@@ -365,8 +374,8 @@ void displayTemperatures() {
   u8g2.print(" C");
 
   u8g2.setCursor(64, y);
-  u8g2.print("T9: ");
-  u8g2.print(temperatures[8]);
+  u8g2.print("T7: ");
+  u8g2.print(temperatures[6]);
   u8g2.print(" C");
   y += lh;
 
@@ -376,15 +385,17 @@ void displayTemperatures() {
   u8g2.print(" C");
 
   u8g2.setCursor(64, y);
-  u8g2.print("TA: ");
-  u8g2.print(temperatures[9]);
+  u8g2.print("T8: ");
+  u8g2.print(temperatures[7]);
   u8g2.print(" C");
 
   y += lh;
 
   u8g2.setCursor(0, y);
   u8g2.print("Vt: ");
-  u8g2.print(temperatures[10]);
+  char buffer10[10];
+  dtostrf(temperatures[10], 4, 0, buffer10);
+  u8g2.print(buffer10);
   u8g2.print(" l/h");
 
   u8g2.setCursor(64, y);
