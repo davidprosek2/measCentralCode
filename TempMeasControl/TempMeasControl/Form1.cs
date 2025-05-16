@@ -52,41 +52,49 @@ namespace TempMeasControl
             {
                 int.TryParse(temperatures[0], out int time);
                 time = time / 1000;
-
-                toolStripStatusLabel1.Text =  time.ToString();
-                textBox1.Text = temperatures[1];
-                textBox2.Text = temperatures[2];
-                textBox3.Text = temperatures[3];
-                textBox4.Text = temperatures[4];
-                textBox5.Text = temperatures[5];
-                textBox6.Text = temperatures[6];
-                textBox7.Text = temperatures[7];
-                textBox8.Text = temperatures[8];
-                textBox9.Text = temperatures[9];
-                textBox10.Text = temperatures[10];
-                textBoxVt.Text = temperatures[11];
-                textBoxP.Text = temperatures[12] ;
                 double v = 0;
-                double.TryParse(temperatures[12], out v);
+                if (!double.TryParse(temperatures[10], out v))
+                    double.TryParse(temperatures[10].Replace(".", ","), out v);
 
-                tbVolume.Text = ((v * 2.0)-initC).ToString();
+                double p = 0;
+                if (!double.TryParse(temperatures[11], out p))
+                    double.TryParse(temperatures[11].Replace(".", ","), out p);
+
+                toolStripStatusLabel1.Text = time.ToString();
+                textBox1.Text = temperatures[1] + " °C";
+                textBox2.Text = temperatures[2] + " °C";
+                textBox3.Text = temperatures[3] + " °C";
+                textBox4.Text = temperatures[4] + " °C";
+                textBox5.Text = temperatures[5] + " °C";
+                textBox6.Text = temperatures[6] + " °C";
+                textBox7.Text = temperatures[7] + " °C";
+                textBox8.Text = temperatures[8] + " °C";//t8
+                textBox9.Text = temperatures[9];//nic
+                textBox10.Text = v.ToString("0.0") + " l"; //objem
+                textBoxVt.Text = p.ToString("0") + "l/h";//orutok
+                textBoxP.Text = v.ToString("0") + " l";
+
+                tbVolume.Text = (v - initC).ToString("0") + " l";
+                LastV = v;
+                if (Math.Abs(initC) < 0.001)
+                    initC = v;
             }
             WriteTemperatures(data);
         }
-
+        private double LastV;
 
 
         private void WriteTemperatures(string data)
         {
 
-            string datats = $"{DateTime.Now.ToString()};{data.Replace(".", ",").Replace(Environment.NewLine,"")}";
+            string datats = $"{DateTime.Now.ToString()};{data.Replace(".", ",").Replace(Environment.NewLine, "")}";
             if (this._notesForm != null && !_notesForm.IsDisposed)
             {
                 lock (_notesForm.lck)
                 {
-                    datats += ";" +(this._notesForm.Volume.HasValue ? this._notesForm.Volume.Value.ToString("0000") : "") + ";";
+                    datats += ";" + (this._notesForm.Volume.HasValue ? this._notesForm.Volume.Value.ToString("0000") : "") + ";";
                     datats += (this._notesForm.Energy.HasValue ? this._notesForm.Energy.Value.ToString("00.00") : "") + ";";
-                    datats += (this._notesForm.Note ?? "").Replace(Environment.NewLine," ") + ";";
+                    datats += (this._notesForm.Note ?? "").Replace(Environment.NewLine, " ") + ";";
                 }
                 _notesForm.Clear();
             }
@@ -95,7 +103,7 @@ namespace TempMeasControl
                 datats += ";;;";
             }
             Debug.WriteLine(datats);
-            datats =  datats.Replace(Environment.NewLine, "").Replace("\r","").Replace("\n","");
+            datats = datats.Replace(Environment.NewLine, "").Replace("\r", "").Replace("\n", "");
             File.AppendAllText($"{MeasurementName}.csv", datats + Environment.NewLine);
             //gitpokus
         }
@@ -107,7 +115,7 @@ namespace TempMeasControl
             {
                 MeasurementName = dlg.MeasurementName;
                 this.Text = dlg.MeasurementName;
-                
+                initC = LastV;
                 InitCom();
             }
 
@@ -140,11 +148,16 @@ namespace TempMeasControl
 
         private void btnNote_Click(object sender, EventArgs e)
         {
-            if(_notesForm == null)  
+            if (_notesForm == null)
                 _notesForm = new NotesForm();
-            if(_notesForm.IsDisposed)
+            if (_notesForm.IsDisposed)
                 _notesForm = new NotesForm();
             _notesForm.Show();
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

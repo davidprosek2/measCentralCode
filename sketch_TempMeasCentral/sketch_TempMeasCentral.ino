@@ -30,20 +30,17 @@ double temperatures[16];
 double flow;
 Preferences preferences;
 
-int pulsePin1 = 25;
-int pulsePin2 = 26;
+int pulsePin1 = 26;
+
 
 volatile unsigned long lastPulseTime1 = 0;
 volatile unsigned long pulsePeriod1 = 0;
 volatile unsigned long pulseCount1 = 0;
 
-volatile unsigned long lastPulseTime2 = 0;
-volatile unsigned long pulsePeriod2 = 0;
-volatile unsigned long pulseCount2 = 0;
 
 void IRAM_ATTR handlePulse1() {
-  unsigned long currentTime = micros()/1000UL;
-  if((currentTime - lastPulseTime1) > 1500)
+  unsigned long currentTime = millis();
+  //if((currentTime - lastPulseTime1) > 2)
   {
   pulsePeriod1 = currentTime - lastPulseTime1;
   lastPulseTime1 = currentTime;
@@ -51,12 +48,7 @@ void IRAM_ATTR handlePulse1() {
   }
 }
 
-void IRAM_ATTR handlePulse2() {
-  unsigned long currentTime = micros()/1000UL;
-  pulsePeriod2 = currentTime - lastPulseTime2;
-  lastPulseTime2 = currentTime;
-  pulseCount2++;
-}
+
 
 // Device addresses  
 DeviceAddress sensor1 = { 0x28, 0x1C, 0x7C, 0x1B, 0x10, 0x00, 0x00, 0x92 };
@@ -65,8 +57,11 @@ DeviceAddress sensor3 = { 0x28, 0xA1, 0xF2, 0x1A, 0x10, 0x00, 0x00, 0x39 };
 DeviceAddress sensor4 = { 0x28, 0x65, 0x53, 0x1C, 0x10, 0x00, 0x00, 0x8D };
 DeviceAddress sensor5 = { 0x28, 0x10, 0x8F, 0x1C, 0x10, 0x00, 0x00, 0x81 };
 DeviceAddress sensor6 = { 0x28, 0xCE, 0xA0, 0x1B, 0x10, 0x00, 0x00, 0x47 };
-DeviceAddress sensor7 = { 0x28, 0x01, 0xD1, 0x1B, 0x10, 0x00, 0x00, 0x5C };
-DeviceAddress sensor8 = { 0x28, 0xFF, 0x6B, 0x1A, 0x10, 0x00, 0x00, 0x40 };
+DeviceAddress sensor7 = { 0x28, 0xD0, 0x22, 0x5F, 0x10, 0x00, 0x00, 0xA9 };
+DeviceAddress sensor8 = { 0x28, 0x86, 0xB9, 0x5E, 0x10, 0x00, 0x00, 0x7D };
+
+
+
 
 
 
@@ -101,33 +96,25 @@ void setup() {
   sensors.begin();
 
 
-  InitSensorAddresses();
+  //InitSensorAddresses();
 
   //podsvícení
   pinMode(backligtPin, OUTPUT);
   analogWrite(backligtPin, 20);
   pulseCount1 = 0;
-  pulseCount2 = 0;
+
   //inicializace čítače
-  pinMode(pulsePin1, INPUT_PULLUP);
-  pinMode(pulsePin2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(pulsePin1), handlePulse1, FALLING);
-  //attachInterrupt(digitalPinToInterrupt(pulsePin2), handlePulse2, FALLING);
-
-  ads.setGain(GAIN_ONE);
-
-  if (!ads.begin()) {
-    Serial.println("Failed to initialize ADS.");
-    while (1)
-      ;
-  }
-
-  // Check each sensor and print the address
+  pinMode(pulsePin1, INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(pulsePin1), handlePulse1, RISING);
+  
 }
 
 unsigned long period1 ;
     unsigned long count1;
     unsigned long lastPulse;
+    unsigned long lastPulseCount;
+    unsigned long lastPulseCountTime;
 
 void loop() {
   // Example temperatures
@@ -139,14 +126,20 @@ void loop() {
      period1 = pulsePeriod1;
      count1 = pulseCount1;
      lastPulse = lastPulseTime1;
-   // unsigned long period2 = pulsePeriod2;
-    //unsigned long count2 = pulseCount2;
     interrupts();
-    readTemperatures();
-    readAnalog();
-    flow = PeriodToFlow(period1);
-   
+    
+//    flow = PeriodToFlow(period1);
+unsigned long currentTime = millis();
+  unsigned long pc = count1-lastPulseCount;
+  unsigned long interval = (currentTime-lastPulseCountTime);
+  float vol = PulsesToVolume(pc);
+  float overallVol = PulsesToVolume(count1);
+  flow = (vol/(float)interval)*60000*60;
+   lastPulseCountTime = currentTime;
+   lastPulseCount = count1;
+   readTemperatures();
     temperatures[10] = flow;
+    temperatures[9] = overallVol;
     
     displayTemperatures();
     sendTemperatures();
@@ -160,9 +153,9 @@ void loop() {
   }
 
   delay(10000);  // Update every 2 seconds
-  unsigned long currentTime = millis();
-  if(currentTime - lastPulse > (60000 / 2))
-    period1 = (currentTime - lastPulse)*4;
+  
+  //if(currentTime - lastPulse > (60000 / 2))
+  //  period1 = (currentTime - lastPulse)*4;
   /*if(currentTime - lastPulseTime2 > (60000 * 5))
     pulsePeriod2 = (currentTime - lastPulseTime2);*/
 
@@ -176,10 +169,15 @@ float PeriodToFlow(unsigned long period)
   if(period == 0)
     return 0.0f;
   float freq = 1000.0f / (float)period;
-  float flowi = freq * 1.0f * 3600.0f ;
+  float flowi = (freq-8.0f)/6.0f*60.0f;
   if(flowi < 0.0)
     flowi = 0.0;
   return flowi;
+}
+
+float PulsesToVolume(unsigned long pulses)
+{
+  return (float)pulses/476.0f;
 }
 
 /// frekvence je puls na 50kJ 
@@ -194,39 +192,6 @@ float PeriodToPower(unsigned long period)
   return PkW;
 }
 
-
-
-
-void readAnalog() {
-  int16_t adc0, adc1, adc2, adc3;
-  float volts0, volts1, volts2, volts3;
-  adc0 = ads.readADC_SingleEnded(0);
-  adc1 = ads.readADC_SingleEnded(1);
-  //adc2 = ads.readADC_SingleEnded(2);
-  //adc3 = ads.readADC_SingleEnded(3);
-
-  volts0 = ads.computeVolts(adc0);
-  volts1 = ads.computeVolts(adc1);
- 
-
-  temperatures[8] = voltageToTemperature(volts0);
-  temperatures[9] = voltageToTemperature(volts1);
-  //volts2 = ads.computeVolts(adc2);
-  //volts3 = ads.computeVolts(adc3);
-
-  //  Serial.println("-----------------------------------------------------------");
-  // Serial.print("AIN0: "); Serial.print(adc0); Serial.print("  "); Serial.print(volts0); Serial.println("V");
-  // Serial.print("AIN1: "); Serial.print(adc1); Serial.print("  "); Serial.print(volts1); Serial.println("V");
-  // Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
-  // Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
-}
-
-double voltageToTemperature(float volts) {
-  return 31.25 * volts /2.0;
-}
-
-
-
 void printAllSensorsAddresses() {
   printAddress(sensor1);
   printAddress(sensor2);
@@ -238,33 +203,33 @@ void printAllSensorsAddresses() {
   printAddress(sensor8);
 }
 
-void InitSensorAddresses() {
-  preferences.begin("my_variables", false);
-  if (!preferences.getBool("initialized", false)) {
-    // Initializing the sensor addresses if not already done
-    preferences.putBytes("sensor1", sensor1, sizeof(DeviceAddress));
-    preferences.putBytes("sensor2", sensor2, sizeof(DeviceAddress));
-    preferences.putBytes("sensor3", sensor3, sizeof(DeviceAddress));
-    preferences.putBytes("sensor4", sensor4, sizeof(DeviceAddress));
-    preferences.putBytes("sensor5", sensor5, sizeof(DeviceAddress));
-    preferences.putBytes("sensor6", sensor6, sizeof(DeviceAddress));
-    preferences.putBytes("sensor7", sensor7, sizeof(DeviceAddress));
-    preferences.putBytes("sensor8", sensor8, sizeof(DeviceAddress));
-    preferences.putBool("initialized", true);
-  } else {
-    // Retrieve sensor addresses from non-volatile memory
-    preferences.getBytes("sensor1", sensor1, sizeof(DeviceAddress));
-    preferences.getBytes("sensor2", sensor2, sizeof(DeviceAddress));
-    preferences.getBytes("sensor3", sensor3, sizeof(DeviceAddress));
-    preferences.getBytes("sensor4", sensor4, sizeof(DeviceAddress));
-    preferences.getBytes("sensor5", sensor5, sizeof(DeviceAddress));
-    preferences.getBytes("sensor6", sensor6, sizeof(DeviceAddress));
-    preferences.getBytes("sensor7", sensor7, sizeof(DeviceAddress));
-    preferences.getBytes("sensor8", sensor8, sizeof(DeviceAddress));
-  }
+// void InitSensorAddresses() {
+//   preferences.begin("my_variables", false);
+//   if (!preferences.getBool("initialized", false)) {
+//     // Initializing the sensor addresses if not already done
+//     preferences.putBytes("sensor1", sensor1, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor2", sensor2, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor3", sensor3, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor4", sensor4, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor5", sensor5, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor6", sensor6, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor7", sensor7, sizeof(DeviceAddress));
+//     preferences.putBytes("sensor8", sensor8, sizeof(DeviceAddress));
+//     preferences.putBool("initialized", true);
+//   } else {
+//     // Retrieve sensor addresses from non-volatile memory
+//     preferences.getBytes("sensor1", sensor1, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor2", sensor2, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor3", sensor3, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor4", sensor4, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor5", sensor5, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor6", sensor6, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor7", sensor7, sizeof(DeviceAddress));
+//     preferences.getBytes("sensor8", sensor8, sizeof(DeviceAddress));
+//   }
 
-  preferences.end();
-}
+//   preferences.end();
+// }
 
 
 
@@ -286,23 +251,7 @@ void readTemperatures() {
       temperatures[i] = 0.0;
   }
 
-  //  temperatures[0] = 20.0;
-  // temperatures[1] = 20.1;
-  // temperatures[2] = 20.2;
-  // temperatures[3] = 20.3;
-  // temperatures[4] = 20.4;
-  // temperatures[5] = 20.5;
-  // temperatures[6] = 20.6;
-  // temperatures[7] = 20.7;
-
-  // Print temperatures to Serial Monitor
-  // for (int i = 0; i < 8; i++) {
-  //   Serial.print("Sensor ");
-  //   Serial.print(i + 1);
-  //   Serial.print(": ");
-  //   Serial.print(temperatures[i]);
-  //   Serial.println(" °C");
-  // }
+  
 }
 
 void printAddress(DeviceAddress deviceAddress) {
@@ -320,19 +269,11 @@ void printAddress(DeviceAddress deviceAddress) {
 
 void sendTemperatures() {
   String temperatureString = String(millis()) ;
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 11; i++) {
     temperatureString += ";" + String(temperatures[i]);
   }
 
-  temperatureString += ";" + String(flow);
-
-  temperatureString += ";" + String(count1);
- 
-   temperatureString += ";" + String(lastPulse);
-
   
-   temperatureString += ";" + String(period1);
-
 
   Serial.println(temperatureString);
 }
@@ -386,7 +327,7 @@ void displayTemperatures() {
 
   u8g2.setCursor(64, y);
   u8g2.print("T7: ");
-  u8g2.print(temperatures[8]);
+  u8g2.print(temperatures[6]);
   u8g2.print(" C");
   y += lh;
 
@@ -397,7 +338,7 @@ void displayTemperatures() {
 
   u8g2.setCursor(64, y);
   u8g2.print("T8: ");
-  u8g2.print(temperatures[9]);
+  u8g2.print(temperatures[7]);
   u8g2.print(" C");
 
   y += lh;
@@ -410,9 +351,11 @@ void displayTemperatures() {
   u8g2.print(" l/h");
 
   u8g2.setCursor(64, y);
-  u8g2.print("P: ");
-  u8g2.print(temperatures[11]);
-  u8g2.print(" kW");
+  u8g2.print("V: ");
+  char buffer11[10];
+  dtostrf(temperatures[9], 4, 0, buffer11);
+  u8g2.print(buffer11);
+  u8g2.print(" l");
 
   u8g2.sendBuffer();
 }

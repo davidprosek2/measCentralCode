@@ -94,150 +94,150 @@
             // label1
             // 
             label1.Font = new Font("Segoe UI", 15.75F);
-            label1.Location = new Point(25, 51);
+            label1.Location = new Point(25, 58);
             label1.Name = "label1";
-            label1.Size = new Size(114, 35);
+            label1.Size = new Size(152, 35);
             label1.TabIndex = 0;
-            label1.Text = "Temp 1:";
+            label1.Text = "Vstup ŠV:";
             // 
             // label2
             // 
             label2.Font = new Font("Segoe UI", 15.75F);
-            label2.Location = new Point(25, 92);
+            label2.Location = new Point(25, 99);
             label2.Name = "label2";
-            label2.Size = new Size(114, 35);
+            label2.Size = new Size(152, 35);
             label2.TabIndex = 1;
-            label2.Text = "Temp 2:";
+            label2.Text = "Výstup ŠV:";
             // 
             // label3
             // 
             label3.Font = new Font("Segoe UI", 15.75F);
-            label3.Location = new Point(25, 133);
+            label3.Location = new Point(25, 140);
             label3.Name = "label3";
-            label3.Size = new Size(114, 35);
+            label3.Size = new Size(176, 35);
             label3.TabIndex = 2;
-            label3.Text = "Temp 3:";
+            label3.Text = "Nádrž zač H:";
             // 
             // label4
             // 
             label4.Font = new Font("Segoe UI", 15.75F);
-            label4.Location = new Point(25, 174);
+            label4.Location = new Point(25, 181);
             label4.Name = "label4";
-            label4.Size = new Size(114, 35);
+            label4.Size = new Size(176, 35);
             label4.TabIndex = 3;
-            label4.Text = "Temp 4:";
+            label4.Text = "Nádrž zač D:";
             // 
             // label5
             // 
             label5.Font = new Font("Segoe UI", 15.75F);
-            label5.Location = new Point(320, 58);
+            label5.Location = new Point(402, 58);
             label5.Name = "label5";
-            label5.Size = new Size(120, 35);
+            label5.Size = new Size(172, 35);
             label5.TabIndex = 4;
-            label5.Text = "Temp 5:";
+            label5.Text = "Nádrž kon D:";
             // 
             // label6
             // 
             label6.Font = new Font("Segoe UI", 15.75F);
-            label6.Location = new Point(320, 102);
+            label6.Location = new Point(402, 102);
             label6.Name = "label6";
-            label6.Size = new Size(120, 35);
+            label6.Size = new Size(172, 35);
             label6.TabIndex = 5;
-            label6.Text = "Temp 6:";
+            label6.Text = "Nádrž kon H:";
             // 
             // label7
             // 
             label7.Font = new Font("Segoe UI", 15.75F);
-            label7.Location = new Point(320, 140);
+            label7.Location = new Point(409, 140);
             label7.Name = "label7";
-            label7.Size = new Size(120, 35);
+            label7.Size = new Size(165, 35);
             label7.TabIndex = 6;
-            label7.Text = "Temp 7:";
+            label7.Text = "Vstup ČV:";
             // 
             // label8
             // 
             label8.Font = new Font("Segoe UI", 15.75F);
-            label8.Location = new Point(320, 181);
+            label8.Location = new Point(409, 181);
             label8.Name = "label8";
-            label8.Size = new Size(120, 35);
+            label8.Size = new Size(165, 35);
             label8.TabIndex = 7;
-            label8.Text = "Temp 8:";
+            label8.Text = "Výstup ČV:";
             // 
             // textBox1
             // 
             textBox1.Font = new Font("Segoe UI", 15.75F);
-            textBox1.Location = new Point(161, 55);
+            textBox1.Location = new Point(207, 55);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
-            textBox1.Size = new Size(100, 42);
+            textBox1.Size = new Size(120, 42);
             textBox1.TabIndex = 8;
             // 
             // textBox2
             // 
             textBox2.Font = new Font("Segoe UI", 15.75F);
-            textBox2.Location = new Point(161, 96);
+            textBox2.Location = new Point(207, 96);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(100, 42);
+            textBox2.Size = new Size(120, 42);
             textBox2.TabIndex = 9;
             // 
             // textBox3
             // 
             textBox3.Font = new Font("Segoe UI", 15.75F);
-            textBox3.Location = new Point(161, 137);
+            textBox3.Location = new Point(207, 137);
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
-            textBox3.Size = new Size(100, 42);
+            textBox3.Size = new Size(120, 42);
             textBox3.TabIndex = 10;
             // 
             // textBox4
             // 
             textBox4.Font = new Font("Segoe UI", 15.75F);
-            textBox4.Location = new Point(161, 178);
+            textBox4.Location = new Point(207, 178);
             textBox4.Name = "textBox4";
             textBox4.ReadOnly = true;
-            textBox4.Size = new Size(100, 42);
+            textBox4.Size = new Size(120, 42);
             textBox4.TabIndex = 11;
             // 
             // textBox5
             // 
             textBox5.Font = new Font("Segoe UI", 15.75F);
-            textBox5.Location = new Point(446, 55);
+            textBox5.Location = new Point(580, 55);
             textBox5.Name = "textBox5";
             textBox5.ReadOnly = true;
-            textBox5.Size = new Size(100, 42);
+            textBox5.Size = new Size(129, 42);
             textBox5.TabIndex = 12;
             // 
             // textBox6
             // 
             textBox6.Font = new Font("Segoe UI", 15.75F);
-            textBox6.Location = new Point(446, 96);
+            textBox6.Location = new Point(580, 96);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
-            textBox6.Size = new Size(100, 42);
+            textBox6.Size = new Size(129, 42);
             textBox6.TabIndex = 13;
             // 
             // textBox7
             // 
             textBox7.Font = new Font("Segoe UI", 15.75F);
-            textBox7.Location = new Point(446, 137);
+            textBox7.Location = new Point(580, 137);
             textBox7.Name = "textBox7";
             textBox7.ReadOnly = true;
-            textBox7.Size = new Size(100, 42);
+            textBox7.Size = new Size(129, 42);
             textBox7.TabIndex = 14;
             // 
             // textBox8
             // 
             textBox8.Font = new Font("Segoe UI", 15.75F);
-            textBox8.Location = new Point(446, 178);
+            textBox8.Location = new Point(580, 178);
             textBox8.Name = "textBox8";
             textBox8.ReadOnly = true;
-            textBox8.Size = new Size(100, 42);
+            textBox8.Size = new Size(129, 42);
             textBox8.TabIndex = 15;
             // 
             // startButton
             // 
-            startButton.Location = new Point(649, 70);
+            startButton.Location = new Point(812, 61);
             startButton.Name = "startButton";
             startButton.Size = new Size(103, 27);
             startButton.TabIndex = 16;
@@ -246,7 +246,7 @@
             // 
             // stopButton
             // 
-            stopButton.Location = new Point(649, 114);
+            stopButton.Location = new Point(812, 105);
             stopButton.Name = "stopButton";
             stopButton.Size = new Size(103, 33);
             stopButton.TabIndex = 17;
@@ -338,78 +338,82 @@
             // label9
             // 
             label9.Font = new Font("Segoe UI", 15.75F);
-            label9.Location = new Point(25, 221);
+            label9.Location = new Point(25, 228);
             label9.Name = "label9";
-            label9.Size = new Size(114, 35);
+            label9.Size = new Size(152, 35);
             label9.TabIndex = 23;
             label9.Text = "Temp 9:";
+            label9.Visible = false;
             // 
             // label10
             // 
             label10.Font = new Font("Segoe UI", 15.75F);
-            label10.Location = new Point(25, 262);
+            label10.Location = new Point(25, 269);
             label10.Name = "label10";
-            label10.Size = new Size(114, 35);
+            label10.Size = new Size(152, 35);
             label10.TabIndex = 24;
             label10.Text = "Průtok:";
             // 
             // label11
             // 
             label11.Font = new Font("Segoe UI", 15.75F);
-            label11.Location = new Point(320, 228);
+            label11.Location = new Point(409, 228);
             label11.Name = "label11";
             label11.Size = new Size(129, 35);
             label11.TabIndex = 25;
             label11.Text = "Temp 10:";
+            label11.Visible = false;
             // 
             // label12
             // 
             label12.Font = new Font("Segoe UI", 15.75F);
-            label12.Location = new Point(320, 269);
+            label12.Location = new Point(409, 269);
             label12.Name = "label12";
             label12.Size = new Size(120, 35);
             label12.TabIndex = 26;
-            label12.Text = "Nic:";
+            label12.Text = "Celk obj:";
             // 
             // textBox9
             // 
             textBox9.Font = new Font("Segoe UI", 15.75F);
-            textBox9.Location = new Point(161, 225);
+            textBox9.Location = new Point(207, 225);
             textBox9.Name = "textBox9";
             textBox9.ReadOnly = true;
-            textBox9.Size = new Size(100, 42);
+            textBox9.Size = new Size(120, 42);
             textBox9.TabIndex = 27;
+            textBox9.Visible = false;
             // 
             // textBoxVt
             // 
             textBoxVt.Font = new Font("Segoe UI", 15.75F);
-            textBoxVt.Location = new Point(161, 266);
+            textBoxVt.Location = new Point(207, 266);
             textBoxVt.Name = "textBoxVt";
             textBoxVt.ReadOnly = true;
-            textBoxVt.Size = new Size(100, 42);
+            textBoxVt.Size = new Size(120, 42);
             textBoxVt.TabIndex = 28;
             // 
             // textBox10
             // 
             textBox10.Font = new Font("Segoe UI", 15.75F);
-            textBox10.Location = new Point(446, 225);
+            textBox10.Location = new Point(580, 225);
             textBox10.Name = "textBox10";
             textBox10.ReadOnly = true;
-            textBox10.Size = new Size(100, 42);
+            textBox10.Size = new Size(129, 42);
             textBox10.TabIndex = 29;
+            textBox10.Visible = false;
             // 
             // textBoxP
             // 
             textBoxP.Font = new Font("Segoe UI", 15.75F);
-            textBoxP.Location = new Point(446, 266);
+            textBoxP.Location = new Point(580, 266);
             textBoxP.Name = "textBoxP";
             textBoxP.ReadOnly = true;
-            textBoxP.Size = new Size(100, 42);
+            textBoxP.Size = new Size(129, 42);
             textBoxP.TabIndex = 30;
             // 
             // btnNote
             // 
-            btnNote.Location = new Point(660, 197);
+            btnNote.Location = new Point(823, 188);
             btnNote.Name = "btnNote";
             btnNote.Size = new Size(75, 23);
             btnNote.TabIndex = 31;
@@ -422,17 +426,18 @@
             label13.Font = new Font("Segoe UI", 15.75F);
             label13.Location = new Point(25, 319);
             label13.Name = "label13";
-            label13.Size = new Size(114, 35);
+            label13.Size = new Size(152, 35);
             label13.TabIndex = 32;
             label13.Text = "Objem:";
+            label13.Click += label13_Click;
             // 
             // tbVolume
             // 
             tbVolume.Font = new Font("Segoe UI", 15.75F);
-            tbVolume.Location = new Point(161, 316);
+            tbVolume.Location = new Point(207, 316);
             tbVolume.Name = "tbVolume";
             tbVolume.ReadOnly = true;
-            tbVolume.Size = new Size(100, 42);
+            tbVolume.Size = new Size(120, 42);
             tbVolume.TabIndex = 33;
             // 
             // Form1
