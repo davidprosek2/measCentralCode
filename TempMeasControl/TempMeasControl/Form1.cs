@@ -97,7 +97,7 @@ namespace TempMeasControl
             Debug.WriteLine(datats);
             datats =  datats.Replace(Environment.NewLine, "").Replace("\r","").Replace("\n","");
             File.AppendAllText($"{MeasurementName}.csv", datats + Environment.NewLine);
-
+            //gitpokus
         }
 
         private void button1_Click(object sender, EventArgs e)
