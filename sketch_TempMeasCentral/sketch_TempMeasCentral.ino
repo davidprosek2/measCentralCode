@@ -27,6 +27,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass the oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
 double temperatures[16];
+double flow;
 Preferences preferences;
 
 int pulsePin1 = 25;
@@ -41,14 +42,17 @@ volatile unsigned long pulsePeriod2 = 0;
 volatile unsigned long pulseCount2 = 0;
 
 void IRAM_ATTR handlePulse1() {
-  unsigned long currentTime = millis();
+  unsigned long currentTime = micros()/1000UL;
+  if((currentTime - lastPulseTime1) > 1500)
+  {
   pulsePeriod1 = currentTime - lastPulseTime1;
   lastPulseTime1 = currentTime;
   pulseCount1++;
+  }
 }
 
 void IRAM_ATTR handlePulse2() {
-  unsigned long currentTime = millis();
+  unsigned long currentTime = micros()/1000UL;
   pulsePeriod2 = currentTime - lastPulseTime2;
   lastPulseTime2 = currentTime;
   pulseCount2++;
@@ -102,12 +106,13 @@ void setup() {
   //podsvícení
   pinMode(backligtPin, OUTPUT);
   analogWrite(backligtPin, 20);
-
+  pulseCount1 = 0;
+  pulseCount2 = 0;
   //inicializace čítače
   pinMode(pulsePin1, INPUT_PULLUP);
   pinMode(pulsePin2, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(pulsePin1), handlePulse1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(pulsePin2), handlePulse2, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(pulsePin2), handlePulse2, FALLING);
 
   ads.setGain(GAIN_ONE);
 
@@ -120,6 +125,10 @@ void setup() {
   // Check each sensor and print the address
 }
 
+unsigned long period1 ;
+    unsigned long count1;
+    unsigned long lastPulse;
+
 void loop() {
   // Example temperatures
 
@@ -127,21 +136,18 @@ void loop() {
     showSetup();
   } else {
     noInterrupts();
-    unsigned long period1 = pulsePeriod1;
-    unsigned long count1 = pulseCount1;
-    unsigned long period2 = pulsePeriod2;
-    unsigned long count2 = pulseCount2;
+     period1 = pulsePeriod1;
+     count1 = pulseCount1;
+     lastPulse = lastPulseTime1;
+   // unsigned long period2 = pulsePeriod2;
+    //unsigned long count2 = pulseCount2;
     interrupts();
     readTemperatures();
     readAnalog();
-    float flow = PeriodToFlow(period2);
-    float power = PeriodToPower(period1);
+    flow = PeriodToFlow(period1);
+   
     temperatures[10] = flow;
-    temperatures[11] = power;
-    temperatures[12] = period2;
-    temperatures[13] = period1;
-    temperatures[14] = count2;
-    temperatures[15] = count1;
+    
     displayTemperatures();
     sendTemperatures();
   }
@@ -155,25 +161,25 @@ void loop() {
 
   delay(10000);  // Update every 2 seconds
   unsigned long currentTime = millis();
-  if(currentTime - lastPulseTime1 > 60000 * 15)
-    pulsePeriod1 = (currentTime - lastPulseTime1)*32;
-  if(currentTime - lastPulseTime2 > 60000 * 15)
-    pulsePeriod2 = (currentTime - lastPulseTime2)*32;
+  if(currentTime - lastPulse > (60000 / 2))
+    period1 = (currentTime - lastPulse)*4;
+  /*if(currentTime - lastPulseTime2 > (60000 * 5))
+    pulsePeriod2 = (currentTime - lastPulseTime2);*/
 
 }
 
 ///
-/// frokvence pulsu je 1puls na litr
+/// frekvence pulsu je 1puls na litr
 ///
 float PeriodToFlow(unsigned long period)
 {
   if(period == 0)
     return 0.0f;
-  float freq = 1000.0 / period;
-  float flow = freq * 100.0 * 3600.0 ;
-  if(flow < 5.0)
-    flow = 0.0;
-  return flow;
+  float freq = 1000.0f / (float)period;
+  float flowi = freq * 1.0f * 3600.0f ;
+  if(flowi < 0.0)
+    flowi = 0.0;
+  return flowi;
 }
 
 /// frekvence je puls na 50kJ 
@@ -181,7 +187,7 @@ float PeriodToPower(unsigned long period)
 {
   if(period == 0)
     return 0.0;
-  float freq = 1000.0 / period;
+  float freq = 1000.0 / (float)period;
   float PkW = 50 * freq;
  // if(PkW < 0.5)
    // PkW = 0;
@@ -201,6 +207,7 @@ void readAnalog() {
 
   volts0 = ads.computeVolts(adc0);
   volts1 = ads.computeVolts(adc1);
+ 
 
   temperatures[8] = voltageToTemperature(volts0);
   temperatures[9] = voltageToTemperature(volts1);
@@ -215,7 +222,7 @@ void readAnalog() {
 }
 
 double voltageToTemperature(float volts) {
-  return 31.25 * volts;
+  return 31.25 * volts /2.0;
 }
 
 
@@ -313,14 +320,18 @@ void printAddress(DeviceAddress deviceAddress) {
 
 void sendTemperatures() {
   String temperatureString = String(millis()) ;
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < 10; i++) {
     temperatureString += ";" + String(temperatures[i]);
   }
+
+  temperatureString += ";" + String(flow);
+
+  temperatureString += ";" + String(count1);
  
-   temperatureString += ";" + String(lastPulseTime1);
+   temperatureString += ";" + String(lastPulse);
 
   
-   temperatureString += ";" + String(lastPulseTime2);
+   temperatureString += ";" + String(period1);
 
 
   Serial.println(temperatureString);
@@ -375,7 +386,7 @@ void displayTemperatures() {
 
   u8g2.setCursor(64, y);
   u8g2.print("T7: ");
-  u8g2.print(temperatures[6]);
+  u8g2.print(temperatures[8]);
   u8g2.print(" C");
   y += lh;
 
@@ -386,7 +397,7 @@ void displayTemperatures() {
 
   u8g2.setCursor(64, y);
   u8g2.print("T8: ");
-  u8g2.print(temperatures[7]);
+  u8g2.print(temperatures[9]);
   u8g2.print(" C");
 
   y += lh;
@@ -394,7 +405,7 @@ void displayTemperatures() {
   u8g2.setCursor(0, y);
   u8g2.print("Vt: ");
   char buffer10[10];
-  dtostrf(temperatures[10], 4, 0, buffer10);
+  dtostrf(flow, 4, 0, buffer10);
   u8g2.print(buffer10);
   u8g2.print(" l/h");
 

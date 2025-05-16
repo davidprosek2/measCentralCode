@@ -12,6 +12,7 @@ namespace TempMeasControl
 
         private string _portName = "COM5";
         private string MeasurementName = "default";
+        private double initC = 0;
         MessageProcessor _messageProcessor;
 
         public Form1()
@@ -64,7 +65,11 @@ namespace TempMeasControl
                 textBox9.Text = temperatures[9];
                 textBox10.Text = temperatures[10];
                 textBoxVt.Text = temperatures[11];
-                textBoxP.Text = temperatures[12];
+                textBoxP.Text = temperatures[12] ;
+                double v = 0;
+                double.TryParse(temperatures[12], out v);
+
+                tbVolume.Text = ((v * 2.0)-initC).ToString();
             }
             WriteTemperatures(data);
         }
@@ -102,6 +107,7 @@ namespace TempMeasControl
             {
                 MeasurementName = dlg.MeasurementName;
                 this.Text = dlg.MeasurementName;
+                
                 InitCom();
             }
 
